@@ -4,6 +4,7 @@ Welcome to your new dbt project!
 
 ### Directory listing
 trino-explain : using SQL to analyse your explains
+pyspark : contains an example on how you can connect satrburst in pyspark 
 
 
 ### Resources:
