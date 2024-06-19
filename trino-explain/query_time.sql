@@ -65,7 +65,7 @@ SELECT
   ord,
   key,
   value,
-  regexp_replace(value, '[^0-9.]', '') dur,
+  cast(regexp_replace(value, '[^0-9.]', '') as decimal) dur,
   regexp_replace(value, '[^a-zA-Z]', '') dur_unit
 FROM
   split_pairs;
