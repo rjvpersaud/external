@@ -1,7 +1,7 @@
 ####
 #### There are several components
 #### ----------------------------
-frag.sql - This works out the information for each fragement
+frag.sql - This works out the information for each fragement <\br>
 indent.sql - for each line work out what the identation is this will allow understanding which part of the 
 query_time.sql - work out the query components , allows you to decided which query to concentrate on 
 scan.sql - How is the source data being accessed.
