@@ -1,12 +1,12 @@
 ####
 #### There are several components
 #### ----------------------------
-frag.sql - This works out the information for each fragement <\br>
-indent.sql - for each line work out what the identation is this will allow understanding which part of the 
-query_time.sql - work out the query components , allows you to decided which query to concentrate on 
-scan.sql - How is the source data being accessed.
-estimates.sql - breakdown the estimate lines. The important ones are the ones from the SOURCE fragments
-time_rows.sql - how long fragments take , and input and output rows.
+frag.sql - This works out the information for each fragement <br />
+indent.sql - for each line work out what the identation is this will allow understanding which part of the <br />
+query_time.sql - work out the query components , allows you to decided which query to concentrate on <br />
+scan.sql - How is the source data being accessed.<br />
+estimates.sql - breakdown the estimate lines. The important ones are the ones from the SOURCE fragments<br />
+time_rows.sql - how long fragments take , and input and output rows.<br />
 
 #### At Query Level
 ####
