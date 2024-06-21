@@ -47,6 +47,7 @@ with
       and lqp like ('Fragment%')
   )
 SELECT
+  query_id,
   lqp,
   ord,
   SPLIT(lqp, ' ') [2] frgno,
