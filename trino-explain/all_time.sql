@@ -111,7 +111,7 @@ SELECT
   query_id,
   ord,
   key,
-  regexp_replace(value, '[^0-9.]', '') value,
+  cast(regexp_replace(value, '[^0-9.]', '') as decimal) value,
   CASE WHEN value like ('%row%') then 'rows' 
        WHEN value like ('%ns%') then 'ns' 
        WHEN value like ('%ms%') then 'ms' 
