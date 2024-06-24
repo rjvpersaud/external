@@ -159,28 +159,113 @@ with
     group by
       1
   ),
-alluntcnv as ( select
- query_id 
-,key 
-,case when unit = 's' then value 
-      when unit = 'ms' then value/1000
-      when unit = 'us' then value/(1000 * 1000) 
-      when unit = 'us' then value/(1000 * 1000 * 1000)
-      when unit = 'm' then value * 60
-      when unit = 'm' then value * 60 * 60
-end value
-from all_time
-where Key in ('CPU' , 'Blocked' , 'Scheduled'))
-,alltme as (
-    select 
-    query_id
-   ,sum(case when key = 'CPU' then value else 0 end) cpu_sum 
-   ,sum(case when key = 'Blocked' then value else 0 end) blk_sum 
-   ,sum(case when key = 'Scheduled' then value else 0 end) sch_sum
-   ,count(*) cnt 
-from alluntcnv
-group by 1
-)
+  alluntcnv as (
+    select
+      query_id,
+      key,
+      case
+        when unit = 's' then value
+        when unit = 'ms' then value / 1000
+        when unit = 'us' then value / (1000 * 1000)
+        when unit = 'us' then value / (1000 * 1000 * 1000)
+        when unit = 'm' then value * 60
+        when unit = 'm' then value * 60 * 60
+      end value
+    from
+      all_time
+    where
+      Key in ('CPU', 'Blocked', 'Scheduled')
+  ),
+  alltme as (
+    select
+      query_id,
+      sum(
+        case
+          when key = 'CPU' then value
+          else 0
+        end
+      ) cpu_sum,
+      sum(
+        case
+          when key = 'Blocked' then value
+          else 0
+        end
+      ) blk_sum,
+      sum(
+        case
+          when key = 'Scheduled' then value
+          else 0
+        end
+      ) sch_sum,
+      count(*) cnt
+    from
+      alluntcnv
+    group by
+      1
+  ),
+  filval as (
+    select
+      query_id,
+      ord,
+      sum(
+        case
+          when key = 'Input' then value
+          else 0
+        end
+      ) inval,
+      sum(
+        case
+          when key = 'Output' then value
+          else 0
+        end
+      ) outval,
+      sum(
+        case
+          when key = 'Input' then value
+          else 0
+        end
+      ) - sum(
+        case
+          when key = 'Output' then value
+          else 0
+        end
+      ) difval
+    from
+      all_time
+    where
+      key in ('Input', 'Output')
+      and unit = 'rows'
+    group by
+      1,
+      2
+    having
+      count(*) = 2
+  ),
+  inoutdif aS (
+    select
+      e.query_id,
+      array_agg(e.ord) ord_arr,
+      array_agg(e.inval) inval_arr,
+      array_agg(e.outval) outval_arr,
+      array_agg(e.difval) difval_arr,
+      array_agg(coalesce(try((e.difval * 100) / e.inval), 0)) difpct_arr,
+      max(e.inval) inval_max,
+      max(e.outval) outval_max,
+      max(e.difval) difval_max,
+      max(coalesce(try((e.difval * 100) / e.inval), 0)) difpct_max,
+      sum(e.inval) inval_sum,
+      sum(e.outval) outval_sum,
+      sum(e.difval) difval_sum,
+      coalesce(try((sum(e.difval) * 100) / sum(e.inval)), 0) difpct_sum
+    from
+      filval e
+      left join frag on frag.query_id = e.query_id
+      and e.ord between frag.ord and frag.end_ord
+    where
+      frgtyp = 'SOURCE'
+    group by
+      1
+  )
 select
   qry.query_id,
   qry.email,
@@ -212,10 +297,23 @@ select
   scntyp.scn_cnt,
   qind.max_indent,
   qind.cnt_indent,
-  alltme.cpu_sum
-,alltme.blk_sum
-,alltme.sch_sum
-,alltme.cnt
+  alltme.cpu_sum,
+  alltme.blk_sum,
+  alltme.sch_sum,
+  alltme.cnt,
+  inoutdif.ord_arr,
+  inoutdif.inval_arr,
+  inoutdif.outval_arr,
+  inoutdif.difval_arr,
+  inoutdif.difpct_arr,
+  inoutdif.inval_max,
+  inoutdif.outval_max,
+  inoutdif.difval_max,
+  inoutdif.difpct_max,
+  inoutdif.inval_sum,
+  inoutdif.outval_sum,
+  inoutdif.difval_sum,
+  inoutdif.difpct_sum
 from
   qry
   left join all on all.query_id = qry.query_id
@@ -223,5 +321,5 @@ from
   left join srcest on srcest.query_id = qry.query_id
   left join scntyp on scntyp.query_id = qry.query_id
   left join qind on qind.query_id = qry.query_id
-  left join alltme on alltme.query_id = qry.query_id;
-;
+  left join alltme on alltme.query_id = qry.query_id
+  left join inoutdif on inoutdif.query_id = qry.query_id
