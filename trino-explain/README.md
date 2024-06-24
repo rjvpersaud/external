@@ -8,7 +8,7 @@ scan.sql - How is the source data being accessed.<br />
 estimates.sql - breakdown the estimate lines. The important ones are the ones from the SOURCE fragments<br />
 time_rows.sql - how long fragments take , and input and output rows.<br />
 
-query_info - This is a summary record for the query , from this create aggregate reports < br />
+query_info - This is a summary record for the query , from this create aggregate reports <br />
 
 #### At Query Level
 ####
