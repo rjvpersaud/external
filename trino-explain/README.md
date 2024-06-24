@@ -9,6 +9,10 @@ estimates.sql - breakdown the estimate lines. The important ones are the ones fr
 time_rows.sql - how long fragments take , and input and output rows.<br />
 
 query_info - This is a summary record for the query , from this create aggregate reports <br />
+tbl_info - This is a summary record for the query tbl record <br />
+
+example_reports_01.sql - This is an example of reports.
+
 
 #### At Query Level
 ####
