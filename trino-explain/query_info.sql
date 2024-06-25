@@ -1,3 +1,4 @@
+USE sandbox01.exp;
 CREATE OR REPLACE VIEW imp.hrs_vw.eval90_query_info as
 with
   qry as (
